@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
-import { View, Animated, I18nManager } from 'react-native';
+import { View, Animated, I18nManager, Text } from 'react-native';
 
 import styles, { borderRadius } from './styles';
 
@@ -47,6 +47,7 @@ export default class Line extends PureComponent {
       tintColor,
       errorColor,
       focusAnimation,
+      left
     } = this.props;
 
     if (disabled) {
@@ -79,33 +80,33 @@ export default class Line extends PureComponent {
   }
 
   render() {
-    let { lineType, labelWidth, labelAnimation, contentInset } = this.props;
+    let { lineType, labelWidth, labelAnimation, contentInset, left } = this.props;
 
     if ('none' === lineType) {
       return null;
     }
 
-    let labelOffset = 2 * (contentInset.left - 2 * borderRadius);
+    let labelOffset = 5 * (contentInset.left - 1 * borderRadius);
     let lineOffset = Animated.add(labelWidth, labelOffset);
 
     let topLineContainerStyle = {
       transform: [{
-        scaleX: I18nManager.isRTL? -1 : 1,
+        scaleX: I18nManager.isRTL? 1 : 3,
       }, {
         translateX: Animated.multiply(labelAnimation, lineOffset),
       }],
     };
 
     let leftContainerStyle = {
-      width: contentInset.left - borderRadius,
+      width: contentInset.left - borderRadius +  (this.props.rangeLeft || 0) //0, // khoảng cách lỗ trống so với lề trái
     };
 
     let rightContainerStyle = {
-      width: contentInset.right - borderRadius,
+      width: contentInset.right - borderRadius +  (this.props.sizeSpaceText || 0)//100, // chỉnh kích thước lỗ(lề phải)
     };
 
     let topContainerStyle = {
-      left: leftContainerStyle.width,
+      left: leftContainerStyle.width , // chỉnh kích thước lỗ(lề phải) kể cả lúc chưa đẩy
       right: rightContainerStyle.width,
     };
 
@@ -113,6 +114,9 @@ export default class Line extends PureComponent {
 
     return (
       <Fragment>
+        {/* <View>
+          {this.props.left}
+          </View> */}
         <View style={[styles.topContainer, topContainerStyle]} pointerEvents='none'>
           <Animated.View style={[styles.topLineContainer, topLineContainerStyle]}>
             <Animated.View style={[styles.borderTop, lineStyle]} />
